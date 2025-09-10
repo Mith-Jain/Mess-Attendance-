@@ -33,24 +33,38 @@
     }
 
     async function updateStatus(status) {
-      const name = document.getElementById("name").value.trim();
-      if (!name) return alert("Enter your name first!");
+        const name = document.getElementById("name").value.trim();
+        if (!name) return alert("Enter your name first!");
 
-      // fetch latest
-      const res = await fetch(URL, { headers: { "X-Master-Key": API_KEY } });
-      const data = (await res.json()).record;
+        try {
+            // fetch latest
+            const res = await fetch(URL, { headers: { "X-Master-Key": API_KEY } });
+            const data = (await res.json()).record;
 
-      // update record
-      data[name] = status;
+            // update record
+            data[name] = status;
 
-      // push update
-      await fetch(URL, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
-        body: JSON.stringify(data)
-      });
+            // push update
+            const putRes = await fetch(URL, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Master-Key": API_KEY
+            },
+            body: JSON.stringify(data)
+            });
 
-      fetchData();
+            if (!putRes.ok) {
+            const err = await putRes.text();
+            console.error("PUT failed:", err);
+            alert("Update failed — check console for error.");
+            } else {
+            fetchData();
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            alert("Something went wrong — check console.");
+        }
     }
 
     function render(data) {
