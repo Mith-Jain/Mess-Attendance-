@@ -59,7 +59,7 @@
             if (!putRes.ok) {
             const err = await putRes.text();
             console.error("PUT failed:", err);
-            alert("Update failed — check console for error.");
+            alert("Update failed: " + err);
             } else {
             fetchData();
             }
