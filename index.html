@@ -27,9 +27,10 @@
     const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
     async function fetchData() {
-      const res = await fetch(URL, { headers: { "X-Master-Key": API_KEY } });
-      const json = await res.json();
-      render(json.record);
+        const res = await fetch(URL, { headers: { "X-Master-Key": API_KEY } });
+        const json = await res.json();
+        const data = json.record || {};   // fallback if record is missing
+        render(data);
     }
 
     async function updateStatus(status) {
@@ -39,7 +40,8 @@
         try {
             // fetch latest
             const res = await fetch(URL, { headers: { "X-Master-Key": API_KEY } });
-            const data = (await res.json()).record;
+            const json = await res.json();
+            const data = json.record || {};   // <-- fix here
 
             // update record
             data[name] = status;
@@ -66,6 +68,7 @@
             alert("Something went wrong — check console.");
         }
     }
+
 
     function render(data) {
       const list = document.getElementById("list");
